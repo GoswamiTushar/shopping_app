@@ -171,6 +171,7 @@ export default function MultipleFileUpload() {
     setLoading(true)
 
     AWS.config.update({
+      
       accessKeyId: process.env.NEXT_PUBLIC_ACCESSKEYID_AWS,
       secretAccessKey: process.env.NEXT_PUBLIC_SECRETACCESSKEY_AWS,
     });

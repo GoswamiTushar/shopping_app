@@ -22,7 +22,7 @@ export default function RootLayout({
       <body className={rubik.className}>
         <CssBaseline/>
         <ResponsiveAppBar/>
-        <Toolbar/>
+        <Toolbar sx={{height: '80px'}}/>
         <CustomTheme>
           {children}
         </CustomTheme>

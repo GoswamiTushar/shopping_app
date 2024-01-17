@@ -6,6 +6,9 @@ import CustomInputField from "@/components/CustomInputField";
 import CustomFormControl from "@/components/CustomFormControl";
 import CustomButton from "@/components/CustomButton";
 import { useRouter } from "next/navigation";
+import CustomToast from "@/components/CustomToast";
+import { CustomToastVariant } from "@/components/CustomToast";
+import CustomLoader from "@/components/CustomLoader";
 
 interface StylesProps {
   theme: Theme;
@@ -45,7 +48,7 @@ const styles = ({ theme }: StylesProps) => ({
 
 const LoginForm = () => {
   const theme = useTheme();
-  const router = useRouter()
+  const router = useRouter();
 
   const [loginData, setLoginData] = useState({
     email: "",
@@ -55,7 +58,12 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
-
+  const [toastData, setToastData] = useState({
+    open: false,
+    message: "",
+    severity: "info" as CustomToastVariant,
+  });
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name: string = e.target.name;
@@ -88,30 +96,54 @@ const LoginForm = () => {
     if (Object.values(formErrors).some((error) => error !== "")) {
       return;
     }
-    console.log({loginData})
+    console.log({ loginData });
+    setLoading(true)
 
-    try{
-      const res = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "auth/login", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData)
-      })
-      if(res.ok){
-        const data = await res.json()
+    try {
+      const res = await fetch(
+        process.env.NEXT_PUBLIC_SERVER_URL + "auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginData),
+        }
+      );
+      const data = await res.json()
+      console.log({data})
+      if (res.ok) {
+        // const data = await res.json();
+        setLoading(false)
 
-        console.log({data})
-        const token = data?.token
+        console.log({ data });
+        const token = data?.token;
 
-        sessionStorage.setItem('token', token)
-        console.log("Login Successful")
-        router.push("/post-products")
+        sessionStorage.setItem("token", token);
+        console.log("Login Successful");
+        setToastData({
+          open: true,
+          message: "Login Successful",
+          severity: "success" as CustomToastVariant,
+        });
+        router.push("/post-products");
       } else {
-        console.log("Login Failed: ", res.statusText)
+        setLoading(false)
+        console.log("Login Failed: ", data?.error);
+        setToastData({
+          open: true,
+          message: `Login Failed: ${data?.error}`,
+          severity: "error" as CustomToastVariant,
+        });
       }
-    }catch(err){
-      console.log({err})
+    } catch (err) {
+      setLoading(false)
+      console.log({ err });
+      setToastData({
+        open: true,
+        message: `Something went wrong: ${err}`,
+        severity: "error" as CustomToastVariant,
+      });
     }
   };
 
@@ -122,7 +154,7 @@ const LoginForm = () => {
       </Typography>
       <Underline />
       <Grid container>
-        <form onSubmit={handleSubmit} style={{width: '100%'}}>
+        <form onSubmit={handleSubmit} style={{ width: "100%" }}>
           <Grid item xs={12}>
             <CustomFormControl
               error={Boolean(formErrors.email)}
@@ -135,7 +167,6 @@ const LoginForm = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={Boolean(formErrors.email)}
-                helperText={formErrors.email}
                 type="email"
               />
             </CustomFormControl>
@@ -153,18 +184,17 @@ const LoginForm = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={Boolean(formErrors.password)}
-                helperText={formErrors.password}
               />
             </CustomFormControl>
           </Grid>
           <Grid item xs={12}>
             <CustomButton
-              variant='contained'
+              variant="contained"
               fullWidth
               sx={{
-                marginTop: '20px',
-                color: 'primary.light',
-                marginBottom: '20px'
+                marginTop: "20px",
+                color: "primary.light",
+                marginBottom: "20px",
               }}
               // onClick={handleSubmit}
               type="submit"
@@ -174,6 +204,10 @@ const LoginForm = () => {
           </Grid>
         </form>
       </Grid>
+      <CustomToast toastData={toastData} setToastData={setToastData} />
+      {
+        loading && <CustomLoader/>
+      }
     </Box>
   );
 };

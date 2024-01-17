@@ -1,20 +1,22 @@
 "use client";
 import React, { useState } from "react";
-import TextField from "@mui/material/TextField";
+import TextField, { TextFieldVariants } from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 interface InputFieldParams {
-  label: string;
-  name: string;
-  value: string | number | boolean;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
-  error: any;
-  helperText: any;
-  type: string;
+  label?: string;
+  name?: string;
+  value?: string | number | boolean;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  error?: any;
+  type?: string;
+  fullWidth?: boolean,
+  variant?: TextFieldVariants | undefined,
+  margin?: "normal" | "none" | "dense" | undefined,
 }
 
 const CustomInputField = ({
@@ -24,8 +26,10 @@ const CustomInputField = ({
   onChange,
   onBlur,
   error,
-  helperText,
   type = "text",
+  fullWidth=false,
+  variant="standard",
+  margin="normal"
 }: InputFieldParams) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,9 +46,10 @@ const CustomInputField = ({
       onChange={onChange}
       onBlur={onBlur}
       error={error}
+      margin={margin}
+      variant={variant}
     //   helperText={error ? helperText : ' '}
-      fullWidth
-      margin="normal"
+      fullWidth={fullWidth}
       InputProps={
         type === "password"
           ? {

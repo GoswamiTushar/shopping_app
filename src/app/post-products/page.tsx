@@ -1,6 +1,11 @@
+import Container from "@mui/material/Container"
+import PostProductForm from "./post-product-form"
+
 const page = () => {
   return (
-    <div>Post products page</div>
+    <Container disableGutters maxWidth={false}>
+        <PostProductForm/>
+    </Container>
   )
 }
 

@@ -1,8 +1,11 @@
+import ResponsiveAppBar from '@/components/Navbar'
+import { Toolbar, CssBaseline } from '@mui/material'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Rubik } from 'next/font/google'
+import CustomTheme from '@/components/Theme'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const rubik = Rubik({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -16,7 +19,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={rubik.className}>
+        <CssBaseline/>
+        <ResponsiveAppBar/>
+        <Toolbar sx={{height: '80px'}}/>
+        <CustomTheme>
+          {children}
+        </CustomTheme>
+        </body>
     </html>
   )
 }
